@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from kanban.views import LoginView
+from kanban.views import LoginView, SignUpView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', LoginView.as_view()),
+    path('singup/', SignUpView.as_view()),
 ]

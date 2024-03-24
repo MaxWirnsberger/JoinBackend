@@ -25,8 +25,13 @@ SECRET_KEY = 'django-insecure-+kf=o5(^q%#a3su4afhzk66h#@z-x5@ozda(07h_wiw-#42wiv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1'
+]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+]
 
 # Application definition
 
@@ -40,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
 	'rest_framework.authtoken',
     'authemail',
+    'corsheaders',
     'kanban'
 ]
 
@@ -50,6 +56,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 

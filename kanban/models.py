@@ -1,7 +1,8 @@
 from django.db import models
+from django.conf import settings
 from authemail.models import EmailUserManager, EmailAbstractUser
 
 class MyUser(EmailAbstractUser):
-    
-	date_of_birth = models.DateField('Date of birth', null=True, blank=True)
-	objects = EmailUserManager()
+    initials = models.CharField(max_length=5, null=True)
+    color = models.CharField(max_length=10, null=True)
+    objects = EmailUserManager()

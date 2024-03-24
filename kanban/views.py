@@ -1,6 +1,9 @@
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.views import ObtainAuthToken, APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from rest_framework import status
+from .models import MyUser
+
 
 class LoginView(ObtainAuthToken):
 
@@ -13,5 +16,32 @@ class LoginView(ObtainAuthToken):
         return Response({
             'token': token.key,
             'user_id': user.pk,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
             'email': user.email
         })
+        
+
+class SignUpView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        first_name = request.data.get("first_name")
+        last_name = request.data.get("last_name")
+        password = request.data.get("password")
+
+        if MyUser.objects.filter(email=email).exists():
+            return Response(
+                {"message": "This email already exists"},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        user = MyUser.objects.create_user(
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            password=password
+        )
+
+        return Response(
+            {"message": "User created successfully"}, status=status.HTTP_201_CREATED
+        )

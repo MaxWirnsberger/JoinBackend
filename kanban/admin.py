@@ -9,8 +9,7 @@ class MyUserAdmin(EmailUserAdmin):
 		('Permissions', {'fields': ('is_active', 'is_staff', 
 									   'is_superuser', 'is_verified', 
 									   'groups', 'user_permissions')}),
-		('Important dates', {'fields': ('last_login', 'date_joined')}),
-		('Custom info', {'fields': ('date_of_birth',)}),
+		('Important dates', {'fields': ('last_login', 'date_joined')})
 	)
 
 admin.site.unregister(get_user_model())
