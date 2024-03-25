@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from authemail.admin import EmailUserAdmin
+from .models import Task, Subtask, Category, Contact
 
 class MyUserAdmin(EmailUserAdmin):
 	fieldsets = (
@@ -14,3 +15,8 @@ class MyUserAdmin(EmailUserAdmin):
 
 admin.site.unregister(get_user_model())
 admin.site.register(get_user_model(), MyUserAdmin)
+
+admin.site.register(Task)
+admin.site.register(Category)
+admin.site.register(Subtask)
+admin.site.register(Contact)
