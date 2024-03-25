@@ -45,3 +45,17 @@ class SignUpView(APIView):
         return Response(
             {"message": "User created successfully"}, status=status.HTTP_201_CREATED
         )
+        
+class LogoutView(APIView):
+    def post(self, request):
+        try:
+            request.user.auth_token.delete()
+            return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class UserData(APIView):
+    def get(self, request):
+        user = request.user
+        return Response({'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email})
+        
