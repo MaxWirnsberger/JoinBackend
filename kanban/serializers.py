@@ -12,7 +12,7 @@ class SubtaskSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Subtask
-        fields = ['id', 'title', 'checked']
+        fields = ['id', 'title', 'checked', 'task']
         
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -25,25 +25,30 @@ class TaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Task
         fields = ['id', 'title', 'description', 'due_date', 'assignedTo', 'status', 'priority', 'category', 'subtasks']
-        
+    
     def update(self, instance, validated_data):
-        # Handhabung der Aktualisierung von Category
+        assignedTo_data = validated_data.pop('assignedTo', None)
+        if assignedTo_data is not None:
+            instance.assignedTo.set(assignedTo_data)    
+    
         category_data = validated_data.pop('category', None)
         if category_data:
             category_name = category_data.get('name')
             if category_name:
-                # Finden der Kategorie anhand des Namens
                 category_instance = Category.objects.get(name=category_name)
                 instance.category = category_instance
 
-        # Handhabung der Aktualisierung von Subtasks
         subtasks_data = validated_data.pop('subtasks', [])
         for subtask_data in subtasks_data:
-            subtask_id = subtask_data.get('id', None)
+            subtask_id = subtask_data.pop('id', None)  
+            subtask_data.pop('task', None)  
             if subtask_id:
                 Subtask.objects.filter(id=subtask_id, task=instance).update(**subtask_data)
             else:
                 Subtask.objects.create(task=instance, **subtask_data)
+                
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
 
-        # Aktualisierung der restlichen Felder des Task
-        return super(TaskSerializer, self).update(instance, validated_data)
+        return instance
