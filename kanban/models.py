@@ -21,23 +21,24 @@ class Category(models.Model):
     def __str__(self):
         return f'{self.name}'
 
-class Subtask(models.Model):
-    title = models.CharField(max_length=100)
-    checked = models.BooleanField(default=False)   
-    
-    def __str__(self):
-        return f'{self.title}'
 
 class Task(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
     due_date = models.DateField(default=datetime.date.today)
-    assigned_users = models.ManyToManyField(Contact, blank=True)
+    assignedTo = models.ManyToManyField(Contact, blank=True)
     status = models.CharField(max_length=25, default="todo")
     priority = models.CharField(max_length=25, default="Low")
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, default=None)
-    subtask = models.ForeignKey(Subtask, on_delete=models.DO_NOTHING, null=True, blank=True)
     
     def __str__(self):
         return f'({self.id})  {self.title}'
     
+
+class Subtask(models.Model):
+    task = models.ForeignKey(Task, related_name='subtasks', on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    checked = models.BooleanField(default=False) 
+    
+    def __str__(self):
+        return f'{self.title}'
