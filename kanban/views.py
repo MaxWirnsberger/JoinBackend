@@ -3,8 +3,8 @@ from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
-from .models import MyUser, Task, Subtask
-from .serializers import TaskSerializer, SubtaskSerializer
+from .models import MyUser, Task, Subtask, Contact
+from .serializers import TaskSerializer, SubtaskSerializer, ContactSerializer
 
 
 class LoginView(ObtainAuthToken):
@@ -66,6 +66,14 @@ class TaskView(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [] #permissions.IsAuthenticated
+    
+    def destroy(self, request, pk=None):
+        try:
+            subtask = Task.objects.get(pk=pk)
+            subtask.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Subtask.DoesNotExist:
+            return Response({'detail': 'Subtask not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class SubtaskViewSet(viewsets.ModelViewSet):
@@ -79,3 +87,9 @@ class SubtaskViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Subtask.DoesNotExist:
             return Response({'detail': 'Subtask not found.'}, status=status.HTTP_404_NOT_FOUND)
+     
+        
+class ContactView(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+    permission_classes = [] #permissions.IsAuthenticated

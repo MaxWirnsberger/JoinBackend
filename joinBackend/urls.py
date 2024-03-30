@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from kanban.views import LoginView, SignUpView, LogoutView, UserData, TaskView, SubtaskViewSet
+from kanban.views import LoginView, SignUpView, LogoutView, UserData, TaskView, SubtaskViewSet, ContactView
 
 router = routers.DefaultRouter()
 router.register(r'tasks', TaskView)
 router.register(r'subtasks', SubtaskViewSet)
+router.register(r'contacts', ContactView)
 
 
 urlpatterns = [
