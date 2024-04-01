@@ -13,6 +13,7 @@ class SubtaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subtask
         fields = ['id', 'title', 'checked', 'task']
+        extra_kwargs = {'task': {'required': False, 'write_only': True}}
         
 class CategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
