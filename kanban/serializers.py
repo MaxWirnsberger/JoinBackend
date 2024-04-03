@@ -27,10 +27,14 @@ class TaskSerializer(serializers.HyperlinkedModelSerializer):
         many=True, 
         queryset=Contact.objects.all(),
         required=False 
+    )      
+    author = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
     )
+
     class Meta:
         model = Task
-        fields = ['id', 'title', 'description', 'due_date', 'assignedTo', 'status', 'priority', 'category', 'subtasks']
+        fields = ['id', 'title', 'description', 'due_date', 'assignedTo', 'status', 'priority', 'category', 'subtasks', 'author']
     
     def update(self, instance, validated_data):
         assignedTo_data = validated_data.pop('assignedTo', None)
@@ -60,26 +64,16 @@ class TaskSerializer(serializers.HyperlinkedModelSerializer):
         return instance
     
     def create(self, validated_data):
-        # Extrahieren der assignedTo-Daten und Entfernen aus dem validated_data
+        validated_data['author'] = self.context['request'].user
         assignedTo_data = validated_data.pop('assignedTo', [])
-
-        # Extrahieren und Entfernen der Subtask-Daten
         subtasks_data = validated_data.pop('subtasks', [])
         category_data = validated_data.pop('category', None)
-
-        # Erstellen der Kategorie, falls erforderlich
         if category_data:
             category_name = category_data.get('name')
             category, created = Category.objects.get_or_create(name=category_name)
             validated_data['category'] = category
-
-        # Erstellen des Task-Objekts
         task = Task.objects.create(**validated_data)
-
-        # Setzen der Many-to-Many-Beziehung für assignedTo
         task.assignedTo.set(assignedTo_data)
-
-        # Erstellen der Subtasks
         for subtask_data in subtasks_data:
             Subtask.objects.create(task=task, **subtask_data)
 
@@ -90,3 +84,9 @@ class ContactSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Contact
         fields = ['id', 'name', 'email', 'phone', 'color']
+        
+    def create(self, validated_data):
+        validated_data['author'] = self.context['request'].user
+        return super().create(validated_data)
+        
+    

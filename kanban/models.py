@@ -11,6 +11,10 @@ class Contact(models.Model):
     email = models.EmailField(max_length=50)
     phone = models.CharField(max_length=25)
     color = models.CharField(max_length=100)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
     
     def __str__(self):
         return f'({self.id})  {self.name}'
@@ -31,6 +35,10 @@ class Task(models.Model):
     status = models.CharField(max_length=25, default="todo")
     priority = models.CharField(max_length=25, default="Low")
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, default=None)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
     
     def __str__(self):
         return f'({self.id})  {self.title}'
